@@ -70,4 +70,33 @@ export class ToolExecuter {
       throw new Error(`${op}: path is excluded by policy: ${rel}`);
     }
   }
+
+   getEffectiveText(rel: string): string | undefined {
+    const key = this.norm(rel);
+    if (this.deleted.has(key)) return undefined;
+    if (this.overlay.has(key)) return this.overlay.get(key);
+    const abs = this.resolveSafe(rel);
+    if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) return undefined;
+    return fs.readFileSync(abs, 'utf8');
+  }
+
+  readFile(rel: string): string {
+    this.assertNotExcluded(rel, 'read_file');
+    const abs = this.resolveSafe(rel);
+    if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
+      throw new Error(`File not found: ${rel}`);
+    }
+    const st = fs.statSync(abs);
+    if (st.size > this.config.maxFileSizeToRead) {
+      throw new Error(`File too large: ${rel}`);
+    }
+    const text = fs.readFileSync(abs, 'utf8');
+    this.tracker.log({
+      type: 'code_analysis',
+      path: this.norm(rel),
+      details: { after: text, toolName: 'read_file' },
+      status: 'executed',
+    });
+    return text;
+  }
 }
