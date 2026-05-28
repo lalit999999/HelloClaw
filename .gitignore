@@ -1,0 +1,4 @@
+# write all nessary files and folders to run the project, but ignore node_modules and dist folders
+node_modules/
+dist/
+.env

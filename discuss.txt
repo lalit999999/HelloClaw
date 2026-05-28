@@ -1,0 +1,27 @@
+
+
+
+chaicodeclaw wakeup
+        1. cli
+        2. telegram 
+
+commands for installing these dependencies
+
+install commander
+install figlet JS
+
+commsands for installing these dependencies:
+npm install commander figlet
+
+npm install commander @clack/core @clack/prompts figlet
+
+install typescript in the project
+npm install typescript --save-dev
+npx tsc --init
+install types for node
+npm install @types/node --save-dev
+
+
+
+// 1. project setup (completed)
+// 2. commander CLI
