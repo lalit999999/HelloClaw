@@ -47,7 +47,7 @@ async function runAgentmode(): Promise<void> {
   });
 
   if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text));
-  console.log(config);
+
 }
 
 export { runAgentmode };
