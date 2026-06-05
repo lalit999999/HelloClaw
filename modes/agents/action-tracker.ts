@@ -51,6 +51,5 @@ export class ActionTracker {
     if (userApproved !== undefined) {
       action.userApproved = userApproved;
     }
-    
   }
 }
