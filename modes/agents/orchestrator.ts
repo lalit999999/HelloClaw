@@ -1,18 +1,28 @@
 import { isCancel, text } from "@clack/prompts";
 import chalk from "chalk";
+// import { defaultAgentConfig } from "./types";
+// import { ActionTracker } from "./action-tracker";
+// import { ToolExecutor } from "./tool-executor";
+// import { createAgentTools } from "./agent-tools";
+// import { stepCountIs, ToolLoopAgent } from "ai";
+// import { getAgentModel } from "../../ai";
+// import { renderTerminalMarkdown } from "../../tui/terminal-md";
+// import { runApprovalFlow } from "./approval";
 import { defaultAgentConfig } from "./types.js";
 import { ActionTracker } from "./action-tracker.js";
 import { ToolExecutor } from "./tool-executer.js";
-import { renderTerminalMarkdown } from  "../../tui/terminalmd.js";
 import { createAgentTools } from "./agent-tool.js";
-import { stepCountIs, ToolLoopAgent } from "ai";
+import { stepCountIs , ToolLoopAgent } from "ai";
 import { getAgentModel } from "../../ai/ai.config.js";
+import { renderTerminalMarkdown } from "../../tui/terminalmd.js";
+import { runApprovalFlow } from "./approvel.js";
 
-async function runAgentmode(): Promise<void> {
-  console.log(chalk.green("agent Mode"));
+export async function runAgentMode() {
+  console.log(chalk.bold("\n🤖 Agent Mode\n"));
+
   const goal = await text({
-    message: "what would you like the agent to do ?",
-    placeholder: "concreate task for this codebase...",
+    message: "What would you like the agent to do?",
+    placeholder: "Concrete task for this codebase…",
   });
 
   if (isCancel(goal) || !goal.trim()) return;
@@ -48,6 +58,18 @@ async function runAgentmode(): Promise<void> {
 
   if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text));
 
-}
+  const ok = await runApprovalFlow(tracker);
+  if (!ok) return executor.clearStaging();
 
-export { runAgentmode };
+  const { errors } = executor.applyApprovedFromTracker();
+
+  if (errors.length) {
+    console.log(chalk.red("\nSome operations reported errors:\n"));
+    for (const e of errors) console.log(chalk.red(`  • ${e}`));
+  }
+  else{
+   console.log(chalk.green('\n✓ Applied.\n'));
+  }
+
+  executor.clearStaging()
+}

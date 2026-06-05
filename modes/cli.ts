@@ -1,13 +1,13 @@
 import chalk from "chalk";
 import { select, isCancel } from "@clack/prompts";
-import { runAgentmode } from "./agents/orchestrator.js";
+import { runAgentMode } from "./agents/orchestrator.js";
 
 // you choose cli mode :
 // agent mode
 // plan
 // ask
 // back
- async function runCliMode() {
+async function runCliMode() {
   console.log(chalk.green("You chose CLI Mode!"));
   while (true) {
     const mode = await select({
@@ -24,7 +24,7 @@ import { runAgentmode } from "./agents/orchestrator.js";
       break;
     }
     if (mode === "agent") {
-     await runAgentmode();
+      await runAgentMode();
     }
     if (mode === "plan") {
       console.log(chalk.green("You chose Plan Mode!"));
