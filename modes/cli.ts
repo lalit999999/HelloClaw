@@ -4,11 +4,6 @@ import { runAgentMode } from "./agents/orchestrator.js";
 import { runAskMode } from "./ask/orchestrator.js";
 import { runPlanMode } from "./plan/orchestrator.js";
 
-// you choose cli mode :
-// agent mode
-// plan
-// ask
-// back
 async function runCliMode() {
   console.log(chalk.green("You chose CLI Mode!"));
   while (true) {

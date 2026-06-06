@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "npm run build && chaicodeclaw-build wakeup",
+    "dev": "chaicodeclaw-build wakeup",
     "build": "tsc"
   },
   "keywords": [],
@@ -32,6 +32,8 @@
     "figlet": "^1.11.0",
     "marked": "^15.0.12",
     "marked-terminal": "^7.3.0",
+    "telegraf": "^4.16.3",
+    "telegraph": "^0.8.22",
     "zod": "^4.4.3"
   }
 }
