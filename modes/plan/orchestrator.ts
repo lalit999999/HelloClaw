@@ -14,7 +14,7 @@ import { generatePlan } from "./planner.js";
 import { printPlan, selectSteps } from "./selection.js";
 import type { Plan } from "./types.js";
 
-// import { createWebTools } from "./web-tools.js";
+import { createWebTools } from "./websearch-tool.js";
 
 function stepPrompt(goal: string, step: PlanStep): string {
   return [`Goal: ${goal}`, `Step: ${step.title}`, step.description].join("\n");
@@ -44,7 +44,7 @@ export async function runPlanMode(): Promise<void> {
 
   const tools = {
     ...createAgentTools(executor),
-    // ...createWebTools(tracker)
+    ...createWebTools(tracker)
   };
 
   for (const step of selected) {
