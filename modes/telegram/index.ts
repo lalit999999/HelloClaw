@@ -1,13 +1,13 @@
 import { Telegraf } from "telegraf";
 import chalk from "chalk";
 import { Welcome } from "./constant.js";
-import { regesterHandlers } from "./Handlers.js";
+import { registerHandlers } from "./Handlers.js";
 
 export async function runTelegramMode() {
     const Token = process.env.TELEGRAM_BOT_TOKEN;
     const ownerid = process.env.TELEGRAM_OWNER_ID;
     const bot = new Telegraf(Token!);
-    regesterHandlers(bot);
+    registerHandlers(bot);
 
     await bot.telegram.sendMessage(ownerid!, Welcome , {parse_mode: "Markdown"});
 
