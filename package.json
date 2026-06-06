@@ -8,14 +8,15 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "npx tsx index.ts",
+    "dev": "npm run build && chaicodeclaw-build wakeup",
     "build": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^25.9.1",
+    "@mendable/firecrawl-js": "^4.25.2",
+    "@types/node": "^25.9.2",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   },

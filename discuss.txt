@@ -25,3 +25,7 @@ npm install @types/node --save-dev
 
 // 1. project setup (completed)
 // 2. commander CLI
+
+
+npm i -D @types/node   # install missing typings
+    npm run build          # should succeed cleanly
