@@ -7,7 +7,7 @@ import { ActionTracker } from "../agents/action-tracker.js";
 import { ToolExecutor } from "../agents/tool-executer.js";
 import { defaultAgentConfig } from "../agents/types.js";
 import { createAgentTools } from "../agents/agent-tool.js";
-import { renderTerminalMarkdown } from "../../tui/terminalmd.js";
+import { renderTerminalMarkdown } from "../../tuifake/terminalmd.js";
 import { runApprovalFlow } from "../agents/approvel.js";
 import { generatePlan } from "./planner.js";
 
@@ -44,7 +44,7 @@ export async function runPlanMode(): Promise<void> {
 
   const tools = {
     ...createAgentTools(executor),
-    ...createWebTools(tracker)
+    ...createWebTools(tracker),
   };
 
   for (const step of selected) {

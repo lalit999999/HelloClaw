@@ -12,9 +12,9 @@ import { defaultAgentConfig } from "./types.js";
 import { ActionTracker } from "./action-tracker.js";
 import { ToolExecutor } from "./tool-executer.js";
 import { createAgentTools } from "./agent-tool.js";
-import { stepCountIs , ToolLoopAgent } from "ai";
+import { stepCountIs, ToolLoopAgent } from "ai";
 import { getAgentModel } from "../../ai/ai.config.js";
-import { renderTerminalMarkdown } from "../../tui/terminalmd.js";
+import { renderTerminalMarkdown } from "../../tuifake/terminalmd.js";
 import { runApprovalFlow } from "./approvel.js";
 
 export async function runAgentMode() {
@@ -66,10 +66,9 @@ export async function runAgentMode() {
   if (errors.length) {
     console.log(chalk.red("\nSome operations reported errors:\n"));
     for (const e of errors) console.log(chalk.red(`  • ${e}`));
-  }
-  else{
-   console.log(chalk.green('\n✓ Applied.\n'));
+  } else {
+    console.log(chalk.green("\n✓ Applied.\n"));
   }
 
-  executor.clearStaging()
+  executor.clearStaging();
 }

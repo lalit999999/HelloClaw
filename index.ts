@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { runwakeup } from "./tui/wakeup.js";
-
+import { runwakeup } from "./tuifake/wakeup.js";
 
 const program = new Command();
 

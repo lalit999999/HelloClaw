@@ -1,35 +1,9 @@
 import chalk from "chalk";
-import { select, isCancel } from "@clack/prompts";
-import { runAgentMode } from "./agents/orchestrator.js";
-import { runAskMode } from "./ask/orchestrator.js";
-import { runPlanMode } from "./plan/orchestrator.js";
+import { runChatUI } from "../tuifake/chat.js";
 
 async function runCliMode() {
   console.log(chalk.green("You chose CLI Mode!"));
-  while (true) {
-    const mode = await select({
-      message: "choose CLI sub Mode.",
-      options: [
-        { value: "agent", label: "Agent Mode" },
-        { value: "plan", label: "Plan Mode" },
-        { value: "ask", label: "Ask Mode" },
-        { value: "back", label: "Back to Main Menu" },
-      ],
-    });
-    if (isCancel(mode) || mode === "back") {
-      console.log(chalk.red("Going back to main menu."));
-      break;
-    }
-    if (mode === "agent") {
-      await runAgentMode();
-    }
-    if (mode === "plan") {
-      await runPlanMode();
-    }
-    if (mode === "ask") {
-      await runAskMode();
-    }
-  }
+  await runChatUI();
 }
 
 export { runCliMode };

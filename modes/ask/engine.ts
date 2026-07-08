@@ -1,14 +1,12 @@
-import chalk from "chalk";
-import { confirm, isCancel, text } from "@clack/prompts";
 import { ToolLoopAgent, stepCountIs, tool } from "ai";
 import { z } from "zod";
 import { getAgentModel } from "../../ai/ai.config.js";
 import { ActionTracker } from "../agents/action-tracker.js";
 import { ToolExecutor } from "../agents/tool-executer.js";
 import { defaultAgentConfig } from "../agents/types.js";
-import { renderTerminalMarkdown } from "../../tuifake/terminalmd.js";
-import { runApprovalFlow } from "../agents/approvel.js";
 import { createWebTools } from "../plan/websearch-tool.js";
+import { runApprovalBridge } from "../agents/approval-bridge.js";
+import type { EngineHooks, TurnResult } from "../engine-types.js";
 
 function createAskTools(executor: ToolExecutor) {
   return {
@@ -69,19 +67,33 @@ function createAskTools(executor: ToolExecutor) {
       }),
       execute: async ({ path: p }) => executor.readSkill(p),
     }),
+
+    save_answer: tool({
+      description:
+        "Stage a markdown file with the given content. It will only be written to disk after the user approves it.",
+      inputSchema: z.object({
+        filename: z
+          .string()
+          .describe("Plain filename ending in .md, no path separators"),
+        content: z.string(),
+      }),
+      execute: async ({ filename, content }) => {
+        const safe =
+          filename.toLowerCase().endsWith(".md") &&
+          !filename.includes("/") &&
+          !filename.includes("\\") &&
+          !filename.includes("..");
+        if (!safe) return "Rejected: filename must be a plain name ending in .md";
+        return executor.createFile(filename, content);
+      },
+    }),
   };
 }
 
-function asMd(question: string, answer: string): string {
-  return `# Ask Mode\n\n## Question\n\n${question.trim()}\n\n## Answer\n\n${answer.trim()}\n`;
-}
-
-export async function runAskMode() {
-  console.log(chalk.bold("\n❓ Ask Mode\n"));
-
-  const question = await text({ message: "What do you want to ask?" });
-  if (isCancel(question) || !question.trim()) return;
-
+export async function runAskTurn(
+  question: string,
+  hooks: EngineHooks,
+): Promise<TurnResult> {
   const config = defaultAgentConfig();
   config.tools.allowFileCreation = true;
   config.tools.allowFileModification = false;
@@ -102,34 +114,27 @@ export async function runAskMode() {
     tools,
   });
 
-  const result = await agent.generate({ prompt: question.trim() });
-  const answer = result.text?.trim() || "(no answer)";
-  console.log("\n" + renderTerminalMarkdown(answer) + "\n");
-
-  const wantsSave = await confirm({
-    message: "Save this answer to a .md file in the current directory?",
-    initialValue: false,
-  });
-  if (isCancel(wantsSave) || !wantsSave) return;
-
-  const filename = await text({
-    message: "Filename",
-    initialValue: "ask.md",
-    validate: (v) => {
-      const s = (v ?? "").trim();
-      if (!s) return "Required";
-      if (s.includes("..") || s.includes("/") || s.includes("\\"))
-        return "No paths";
-      if (!s.toLowerCase().endsWith(".md")) return "Must end with .md";
+  const result = await agent.stream({
+    prompt: question.trim(),
+    onStepFinish: ({ toolCalls }) => {
+      for (const tc of toolCalls) {
+        const preview = JSON.stringify(tc.input).slice(0, 160);
+        hooks.onToolCall(String(tc.toolName), preview);
+      }
     },
   });
 
-  if (isCancel(filename)) return;
+  let transcript = "";
+  for await (const delta of result.textStream) {
+    transcript += delta;
+    hooks.onDelta(delta);
+  }
 
-  executor.createFile(filename, asMd(question, answer));
-  const ok = await runApprovalFlow(tracker);
-  if (!ok) return executor.clearStaging();
+  const { applied, errors } = await runApprovalBridge(
+    tracker,
+    executor,
+    hooks,
+  );
 
-  executor.applyApprovedFromTracker();
-  executor.clearStaging();
+  return { reply: transcript.trim() || "(no answer)", applied, errors };
 }

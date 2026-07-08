@@ -3,15 +3,15 @@ import chalk from "chalk";
 import type { ActionTracker } from "./action-tracker.ts";
 import type { ActionLog } from "./types.ts";
 import { composeBeforeAfter, formatPatch } from "./diff-view.js";
-import { renderTerminalMarkdown } from "../../tui/terminalmd.js";
+import { renderTerminalMarkdown } from "../../tuifake/terminalmd.js";
 
-interface ReviewGroup {
+export interface ReviewGroup {
   label: string;
   actionIds: string[];
   patch: string | null;
 }
 
-function groupPending(pending: ActionLog[]): ReviewGroup[] {
+export function groupPending(pending: ActionLog[]): ReviewGroup[] {
   const byPath = new Map<string, ActionLog[]>();
   const shells: ActionLog[] = [];
 
