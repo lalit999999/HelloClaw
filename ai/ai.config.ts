@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 
 export function getAgentModel(): any {
