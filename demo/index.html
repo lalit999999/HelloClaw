@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlphaMarket Testing Sandbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        #controls select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #product-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .product-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-badge {
+            background: red;
+            color: white;
+            padding: 5px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            border-radius: 3px;
+            display: none;
+        }
+        .product-card.out-of-stock .product-badge {
+            display: block;
+        }
+        .product-name {
+            font-size: 1.2em;
+            margin: 0;
+        }
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .add-to-cart-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .add-to-cart-btn:hover {
+            background: #218838;
+        }
+        #agent-action-logger {
+            margin: 20px;
+            padding: 15px;
+            background: #e7f3fe;
+            border: 1px solid #b6d4fe;
+            color: #31708f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AlphaMarket Testing Sandbox</h1>
+    </header>
+    <div id="controls">
+        <select id="category-filter">
+            <option value="all">All</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Kitchen">Kitchen</option>
+            <option value="Apparel">Apparel</option>
+            <option value="Home">Home</option>
+        </select>
+        <select id="price-sort">
+            <option value="low-to-high">Price: Low to High</option>
+            <option value="high-to-low">Price: High to Low</option>
+        </select>
+    </div>
+    <div id="product-container"></div>
+    <div id="agent-action-logger"></div>
+    <script>
+        const products = [
+            { id: 'p1', name: 'Wireless Noise-Canceling Headphones', price: 129.99, category: 'Electronics', rating: 4.7, stock: 15 },
+            { id: 'p2', name: 'Ergonomic Office Chair', price: 189.50, category: 'Furniture', rating: 4.5, stock: 8 },
+            { id: 'p3', name: 'Stainless Steel Water Bottle', price: 24.99, category: 'Kitchen', rating: 4.2, stock: 50 },
+            { id: 'p4', name: 'Smart Fitness Watch', price: 79.95, category: 'Electronics', rating: 4.4, stock: 0 },
+            { id: 'p5', name: 'Organic Cotton T-Shirt', price: 19.99, category: 'Apparel', rating: 4.1, stock: 25 },
+            { id: 'p6', name: 'Electric Pour-Over Kettle', price: 65.00, category: 'Kitchen', rating: 4.8, stock: 12 },
+            { id: 'p7', name: 'Minimalist Leather Wallet', price: 35.00, category: 'Apparel', rating: 4.6, stock: 30 },
+            { id: 'p8', name: 'Mechanical Gaming Keyboard', price: 109.99, category: 'Electronics', rating: 4.9, stock: 5 },
+            { id: 'p9', name: 'Memory Foam Bed Pillow', price: 45.00, category: 'Home', rating: 4.3, stock: 18 },
+            { id: 'p10', name: 'Portable Bluetooth Speaker', price: 59.99, category: 'Electronics', rating: 4.5, stock: 22 }
+        ];
+
+        const productContainer = document.getElementById('product-container');
+        const categoryFilter = document.getElementById('category-filter');
+        const priceSort = document.getElementById('price-sort');
+        const agentActionLogger = document.getElementById('agent-action-logger');
+
+        function renderProducts(productsToRender) {
+            productContainer.innerHTML = '';
+            productsToRender.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                productCard.setAttribute('data-id', product.id);
+                productCard.setAttribute('data-category', product.category);
+                if (product.stock === 0) {
+                    productCard.classList.add('out-of-stock');
+                }
+                productCard.innerHTML = `
+                    <div class="product-badge">${product.stock === 0 ? 'Out of Stock' : 'In Stock'}</div>
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-category">Category: <span>${product.category}</span></p>
+                    <div class="product-meta">
+                        <span class="product-price">$${product.price.toFixed(2)}</span>
+                        <span class="product-rating">⭐ ${product.rating}</span>
+                    </div>
+                    <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>
+                `;
+
+                productCard.querySelector('.add-to-cart-btn').addEventListener('click', () => {
+                    agentActionLogger.innerText = `Agent Action: Added Product ${product.id} to cart.`;
+                });
+
+                productContainer.appendChild(productCard);
+            });
+        }
+
+        function filterProducts() {
+            const selectedCategory = categoryFilter.value;
+            const filteredProducts = selectedCategory === 'all' ? products : products.filter(product => product.category === selectedCategory);
+            renderProducts(filteredProducts);
+        }
+
+        function sortProducts() {
+            const sortOrder = priceSort.value;
+            const sortedProducts = [...products].sort((a, b) => sortOrder === 'low-to-high' ? a.price - b.price : b.price - a.price);
+            renderProducts(sortedProducts);
+        }
+
+        categoryFilter.addEventListener('change', () => {
+            filterProducts();
+        });
+
+        priceSort.addEventListener('change', () => {
+            sortProducts();
+        });
+
+        window.onload = () => {
+            renderProducts(products);
+        };
+    </script>
+</body>
+</html>
