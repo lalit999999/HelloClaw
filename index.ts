@@ -12,7 +12,7 @@ program
 
 program
   .command("wakeup")
-  .description("show the banner and pick a cli or telegram mode")
+  .description("boot the animated banner and open the chat")
   .action(async () => {
     await runwakeup();
   });

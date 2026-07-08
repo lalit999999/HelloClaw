@@ -156,8 +156,10 @@ export function App() {
       : null;
 
   return (
-    <Box flexDirection="column">
-      <MessageList history={history} live={liveMessage} />
+    <Box flexDirection="column" height="100%">
+      <Box flexDirection="column" flexGrow={1}>
+        <MessageList history={history} live={liveMessage} />
+      </Box>
 
       {pendingGroups ? (
         <ApprovalPanel groups={pendingGroups} onResolve={resolveApproval} />
