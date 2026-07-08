@@ -14,7 +14,7 @@ import { ToolExecutor } from "./tool-executer.js";
 import { createAgentTools } from "./agent-tool.js";
 import { stepCountIs, ToolLoopAgent } from "ai";
 import { getAgentModel } from "../../ai/ai.config.js";
-import { renderTerminalMarkdown } from "../../tuifake/terminalmd.js";
+import { renderTerminalMarkdown } from "../../tui/terminalmd.js";
 import { runApprovalFlow } from "./approvel.js";
 
 export async function runAgentMode() {

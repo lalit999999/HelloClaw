@@ -6,7 +6,7 @@ import { getAgentModel } from "../../ai/ai.config.js";
 import { ActionTracker } from "../agents/action-tracker.js";
 import { ToolExecutor } from "../agents/tool-executer.js";
 import { defaultAgentConfig } from "../agents/types.js";
-import { renderTerminalMarkdown } from "../../tuifake/terminalmd.js";
+import { renderTerminalMarkdown } from "../../tui/terminalmd.js";
 import { runApprovalFlow } from "../agents/approvel.js";
 import { createWebTools } from "../plan/websearch-tool.js";
 

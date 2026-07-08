@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { runChatUI } from "../tuifake/chat.js";
+import { runChatUI } from "../tui/chat.js";
 
 async function runCliMode() {
   console.log(chalk.green("You chose CLI Mode!"));

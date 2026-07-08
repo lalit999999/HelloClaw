@@ -3,7 +3,7 @@ import chalk from "chalk";
 import type { ActionTracker } from "./action-tracker.ts";
 import type { ActionLog } from "./types.ts";
 import { composeBeforeAfter, formatPatch } from "./diff-view.js";
-import { renderTerminalMarkdown } from "../../tuifake/terminalmd.js";
+import { renderTerminalMarkdown } from "../../tui/terminalmd.js";
 
 export interface ReviewGroup {
   label: string;
